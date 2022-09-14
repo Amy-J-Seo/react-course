@@ -1,0 +1,6 @@
+.success {
+  background-color: rgb(183, 250, 166);
+}
+.failure {
+  background-color: lightcoral;
+}
