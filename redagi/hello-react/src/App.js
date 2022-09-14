@@ -1,29 +1,22 @@
 import './App.css';
 import React, { Component } from 'react';
-import LifeCycleSample from './LifeCycleSample';
-import ErrorBoundary from './ErrorBoundary';
-
-function getRandomColor() {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
+import Info from './Info';
 
 class App extends Component {
   state = {
-    color: '#000000',
+    show: false,
   };
-
-  handleClick = () => {
+  handleShow = () => {
     this.setState({
-      color: getRandomColor(),
+      show: !this.state.show,
     });
   };
+
   render() {
     return (
       <div>
-        <button onClick={this.handleClick}>random</button>
-        <ErrorBoundary>
-          <LifeCycleSample color={this.state.color} />
-        </ErrorBoundary>
+        <button onClick={this.handleShow}>show</button>
+        {this.state.show && <Info />}
       </div>
     );
   }
