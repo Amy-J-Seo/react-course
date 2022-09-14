@@ -1,51 +1,41 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
-export default class EventPractice extends Component {
-  state = {
-    message: '',
-  };
+const EventPractice = () => {
+  const [userName, setUserName] = useState('');
+  const [message, setMessage] = useState('');
 
-  handleClick = () => {
-    alert(this.state.userName + ', ' + this.state.message);
-    this.setState({
-      userName: '',
-      message: '',
-    });
+  const onChangeUserName = (e) => setUserName(e.target.value);
+  const onChangeMessage = (e) => setMessage(e.target.value);
+  const onClickBtn = () => {
+    alert(userName + ', ' + message);
+    setUserName('');
+    setMessage('');
   };
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
+  const onKeyPress = (e) => {
+    if (e.key === 'Enter') onclick();
   };
+  return (
+    <div>
+      <h1>Event!</h1>
+      <input
+        type="text"
+        name="userName"
+        placeholder="Enter username"
+        value={userName}
+        onChange={onChangeUserName}
+      />
+      <input
+        type="text"
+        name="message"
+        placeholder="Enter anything"
+        value={message}
+        onChange={onChangeMessage}
+        onKeyDown={onKeyPress}
+      />
+      <button onClick={onClickBtn}>confirm</button>
+      <h2>{message}</h2>
+    </div>
+  );
+};
 
-  handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      this.handleClick();
-    }
-  };
-
-  render() {
-    return (
-      <div>
-        <h1>Event!</h1>
-        <input
-          type="text"
-          name="userName"
-          placeholder="Enter username"
-          value={this.state.userName}
-          onChange={this.handleChange}
-        />
-        <input
-          type="text"
-          name="message"
-          placeholder="Enter anything"
-          value={this.state.message}
-          onChange={this.handleChange}
-          onKeyDown={this.handleKeyPress}
-        />
-        <button onClick={this.handleClick}>confirm</button>
-        <h2>{this.state.message}</h2>
-      </div>
-    );
-  }
-}
+export default EventPractice;
