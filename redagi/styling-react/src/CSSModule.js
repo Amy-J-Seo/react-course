@@ -1,9 +1,12 @@
 import React from "react";
-import styles from "./CSSModule.module.css";
+import styles from "./CSSModule.module.scss";
+import classNames from "classnames/bind";
+
+const cx = classNames.bind(styles);
 
 function CSSModule() {
   return (
-    <div className={`${styles.wrapper} ${styles.inverted}`}>
+    <div className={cx("warpper", "inverted")}>
       Hello, I am <span className="something">CSS Module</span>
     </div>
   );
