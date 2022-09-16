@@ -1,6 +1,8 @@
 import './App.css';
 import React, { Component } from 'react';
 import Info from './Info';
+import Counter from './Counter';
+import Average from './Average';
 
 class App extends Component {
   state = {
@@ -13,12 +15,7 @@ class App extends Component {
   };
 
   render() {
-    return (
-      <div>
-        <button onClick={this.handleShow}>show</button>
-        {this.state.show && <Info />}
-      </div>
-    );
+    return <Average />;
   }
 }
 export default App;
