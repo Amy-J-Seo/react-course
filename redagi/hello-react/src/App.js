@@ -15,7 +15,7 @@ class App extends Component {
   };
 
   render() {
-    return <Average />;
+    return <Info />;
   }
 }
 export default App;
