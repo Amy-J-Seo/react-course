@@ -1,0 +1,14 @@
+//variable
+$red: #fa5252;
+$orange: #fd7e14;
+$yellow: #fcc419;
+$green: #40c057;
+$blue: #3326f3;
+$indigo: #5759d3;
+$violet: #736caf;
+//mixin
+@mixin square($size) {
+  $calculated: 32px * $size;
+  width: $calculated;
+  height: $calculated;
+}
