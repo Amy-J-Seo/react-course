@@ -17,11 +17,14 @@ function TodoInsert({ addTodoFn, onInsert }) {
     setNewTodo(e.target.value);
   }, []);
 
-  const onSubmit = useCallback((e) => {
-    onInsert(newTodo);
-    setNewTodo('');
-    e.preventDefault();
-  });
+  const onSubmit = useCallback(
+    (e) => {
+      onInsert(newTodo);
+      setNewTodo('');
+      e.preventDefault();
+    },
+    [onInsert, newTodo],
+  );
 
   return (
     <form className="TodoInputWrapper" onSubmit={onSubmit}>
