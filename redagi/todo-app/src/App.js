@@ -1,10 +1,10 @@
 import TodoInsert from './components/TodoInsert';
 import TodoList from './components/TodoList';
 import TodoTemplate from './components/TodoTemplate';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useReducer } from 'react';
 import { removeTypeDuplicates } from '../../../../../../Users/com4in/AppData/Local/Microsoft/TypeScript/4.9/node_modules/@babel/types/lib/index';
 
-function createBulTodos() {
+function createBulkTodos() {
   const array = [];
   for (let i = 1; i <= 2500; i++) {
     array.push({
@@ -16,8 +16,28 @@ function createBulTodos() {
   return array;
 }
 
+function todoReducer(todos, action) {
+  switch (action.type) {
+    case 'INSERT':
+      //{type:'INSERT', todo:{id:1, content:'todo', checked:false}}
+      return todos.concat(action.todo);
+    case 'REMOVE':
+      //{type:'REMOVE', id:1}
+      return todos.filter((todo) => todo.id !== action.id);
+    case 'TOGGLE':
+      //{type:'TOGGLE, id:1}
+      return removeTypeDuplicates.map((todo) =>
+        todo.id === action.id ? { ...todo, checked: !todo.checked } : todo,
+      );
+    default:
+      return todos;
+  }
+}
+
 function App() {
-  const [todos, setTodos] = useState(createBulTodos);
+  const [todos, dispatch] = useReducer(todoReducer, undefined, createBulkTodos);
+
+  // const [todos, setTodos] = useState(createBulTodos);
   // useEffect(() => {
   //   let arr = [
   //     {
@@ -40,7 +60,8 @@ function App() {
   // }, []);
 
   const removeTodoHandler = useCallback((id) => {
-    setTodos((todos) => todos.filter((el) => el.id !== id));
+    // setTodos((todos) => todos.filter((el) => el.id !== id));
+    dispatch({ type: 'REMOVE', id });
   }, []);
 
   const nextId = useRef(2501);
@@ -51,7 +72,8 @@ function App() {
       checked: false,
     };
     // setTodos(todos.concat(todo));
-    setTodos((todos) => todos.concat(todo));
+    //setTodos((todos) => todos.concat(todo));
+    dispatch({ type: 'INSERT', todo });
     nextId.current += 1;
   }, []);
 
@@ -60,15 +82,16 @@ function App() {
       ...todos,
       { id: todos.length + 1, content: val, checked: false },
     ];
-    setTodos(newArr);
+    // setTodos(newArr);
   };
 
   const onToggle = useCallback((id) => {
-    setTodos((todos) => {
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, checked: !todo.checked } : todo,
-      );
-    });
+    // setTodos((todos) => {
+    //   todos.map((todo) =>
+    //     todo.id === id ? { ...todo, checked: !todo.checked } : todo,
+    //   );
+    // });
+    dispatch({ type: 'TOGGLE', id });
   }, []);
 
   return (
