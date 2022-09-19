@@ -2,7 +2,6 @@ import TodoInsert from './components/TodoInsert';
 import TodoList from './components/TodoList';
 import TodoTemplate from './components/TodoTemplate';
 import { useEffect, useState, useRef, useCallback, useReducer } from 'react';
-import { removeTypeDuplicates } from '../../../../../../Users/com4in/AppData/Local/Microsoft/TypeScript/4.9/node_modules/@babel/types/lib/index';
 
 function createBulkTodos() {
   const array = [];
@@ -26,7 +25,7 @@ function todoReducer(todos, action) {
       return todos.filter((todo) => todo.id !== action.id);
     case 'TOGGLE':
       //{type:'TOGGLE, id:1}
-      return removeTypeDuplicates.map((todo) =>
+      return todos.map((todo) =>
         todo.id === action.id ? { ...todo, checked: !todo.checked } : todo,
       );
     default:
