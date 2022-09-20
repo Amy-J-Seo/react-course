@@ -12,9 +12,9 @@ function TodoList({ todos, removeHandler, onToggle }) {
         <TodoListItem
           todo={todo}
           key={key}
-          //   removeItem={removeHandler}
-          //   onToggle={onToggle}
-          //   style={style}
+          removeItem={removeHandler}
+          onToggle={onToggle}
+          style={style}
         />
       );
     },
@@ -30,7 +30,7 @@ function TodoList({ todos, removeHandler, onToggle }) {
       rowHeight={57} //one item height
       rowRenderer={rowRenderer} //function that is used for the rendering
       list={todos}
-      //   style={{ outline: 'none' }} //default outline style removed
+      style={{ outline: 'none' }} //default outline style removed
     />
 
     // <ul className="ListWrapper">
