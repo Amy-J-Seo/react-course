@@ -7,9 +7,11 @@ export function loader({ params }) {
 
 export async function action({ request, params }) {
   const formData = await request.formData();
+  console.log("request", request, "===", formData);
   const updates = Object.fromEntries(formData);
+  console.log("updates", updates);
   await updateContact(params.contactId, updates);
-  return redirect();
+  return redirect(`/contacts/${params.contactId}`);
 }
 
 export default function EditContact() {
