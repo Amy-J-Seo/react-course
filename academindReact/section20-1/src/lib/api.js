@@ -30,7 +30,7 @@ export async function getSingleQuote(quoteId) {
   if (!response.ok) {
     throw new Error(data.message || "Could not fetch quote.");
   }
-
+  console.log(data);
   const loadedQuote = {
     id: quoteId,
     ...data,

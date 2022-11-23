@@ -5,12 +5,6 @@ import LoadingSpinner from "../components/UI/LoadingSpinner";
 import useHttp from "../hooks/use-http";
 import { getAllQuotes } from "../lib/api";
 
-const DUMMY_QUOTES = [
-  { id: "q1", author: "1111", text: "111111" },
-  { id: "q2", author: "222222", text: "2222222" },
-  { id: "q3", author: "333333", text: "333333" },
-];
-
 function AllQuotes() {
   const {
     sendRequest,
@@ -18,7 +12,6 @@ function AllQuotes() {
     data: loadedQuotes,
     error,
   } = useHttp(getAllQuotes, true);
-
   useEffect(() => {
     sendRequest();
   }, [sendRequest]);
@@ -39,7 +32,10 @@ function AllQuotes() {
     return <NoQuotesFound />;
   }
 
-  return <QuoteList quotes={DUMMY_QUOTES} />;
+  if (loadedQuotes || loadedQuotes.length > 0) {
+    console.log("checking laodedQuotes", loadedQuotes);
+    return <QuoteList quotes={loadedQuotes} />;
+  }
 }
 
 export default AllQuotes;
