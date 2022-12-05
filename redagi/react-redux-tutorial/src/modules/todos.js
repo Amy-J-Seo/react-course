@@ -59,7 +59,9 @@ const todos = handleActions(
       }),
     [TOGGLE]: (state, { payload: id }) =>
       produce(state, (draft) => {
-        const todo = draft.todos.map((todo) => todo.id === id);
+        const todo = draft.todos.map((todo) => {
+          return todo.id === id;
+        });
         todo.done = !todo.done;
       }),
 
