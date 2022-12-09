@@ -1,12 +1,10 @@
-import logo from "./logo.svg";
 import "./App.css";
-import { Route, Routes, Outlet } from "react-router-dom";
-import Menu from "./components/Menu";
+import { Route, Routes } from "react-router-dom";
 import RedPage from "./pages/RedPage";
 import BluePage from "./pages/BluePage";
 import Layout from "./pages/Layout";
 
-function App() {
+const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />} exact>
@@ -15,6 +13,6 @@ function App() {
       </Route>
     </Routes>
   );
-}
+};
 
 export default App;
