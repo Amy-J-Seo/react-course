@@ -4,6 +4,7 @@ import RedPage from "./pages/RedPage";
 import BluePage from "./pages/BluePage";
 import Layout from "./pages/Layout";
 import UsersPage from "./pages/UsersPage";
+import UserContainer from "./containers/UserContainer";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
       <Route path="/" element={<Layout />} exact>
         <Route path="/red" element={<RedPage />} exact />
         <Route path="/blue" element={<BluePage />} exact />
-        <Route path="/users" element={<UsersPage />} exact />
+        <Route path="/users" element={<UsersPage />} exact></Route>
       </Route>
     </Routes>
   );
