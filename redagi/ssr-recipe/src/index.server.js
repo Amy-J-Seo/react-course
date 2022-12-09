@@ -4,8 +4,13 @@ import express from "express";
 import { StaticRouter } from "react-router-dom/server";
 import App from "./App";
 import path from "path";
-
 import fs from "fs";
+
+import { createStore, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
+import rootReducer from "./modules";
+import PreloadContext from "./lib/PreloadContext";
 
 //search file paths from asset-manifest.json
 const manifest = JSON.parse(
@@ -17,7 +22,7 @@ const chunks = Object.keys(manifest.files)
   .map((key) => `<script src="${manifest.files[key]}"></script>`) //conver to script tag
   .join(""); //concat
 
-function createPage(root) {
+function createPage(root, stateScript) {
   return `<!Doctype html>
   <html lang="en">
   <head>
@@ -35,7 +40,9 @@ function createPage(root) {
   <noscript>You need to enable Javascript to run this app</noscript>
 <div id="root">
 ${root}
+
 </div>
+${stateScript}
 <script src="${manifest.files["runtime~main.js"]}"></script>
 ${chunks}
 <script src="${manifest.files["main.js"]}" ></script>
@@ -45,20 +52,45 @@ ${chunks}
 }
 
 const app = express();
+
 // 서버사이드 렌더링을 처리 할 핸들러 함수입니다.
 const serverRender = async (req, res, next) => {
   // 이 함수는 404가 떠야 하는 상황에 404를 띄우지 않고 서버사이드 렌더링을 해줍니다.
 
   const context = {};
+  const store = createStore(rootReducer, applyMiddleware(thunk));
+
+  const preloadContext = {
+    done: false,
+    promises: [],
+  };
 
   const jsx = (
-    <StaticRouter location={req.url} context={context}>
-      <App />
-    </StaticRouter>
+    <PreloadContext.Provider value={preloadContext}>
+      <Provider store={store}>
+        <StaticRouter location={req.url} context={context}>
+          <App />
+        </StaticRouter>
+      </Provider>
+    </PreloadContext.Provider>
   );
 
+  ReactDOMServer.renderToStaticMarkup(jsx); //render one more time using renderToStaticMarkup
+  try {
+    await Promise.all(preloadContext.promises); //wait for all the promise to return reslove
+  } catch (error) {
+    return res.status(500);
+  }
+  preloadContext.done = true;
+
   const root = ReactDOMServer.renderToString(jsx); // 렌더링을 합니다.
-  res.send(createPage(root)); // 결과물을 응답합니다.
+  //Convert Json to string, and convert < to prevent bad script exicution
+  //https:redux.js.org/recipes/server-rendering#security-consideration
+  const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c");
+  // console.log("checking state String", stateString);
+  const stateScript = `<script>__PRELOADED_STATE__=${stateString}</script>`; //inject initla redux state as script
+  // console.log("checking stateScript!!!!", stateScript);
+  res.send(createPage(root, stateScript)); // 결과물을 응답합니다.
 };
 
 const serve = express.static(path.resolve("./build"), {

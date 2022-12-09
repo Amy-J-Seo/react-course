@@ -6,6 +6,7 @@ function Layout() {
   return (
     <div>
       <Menu />
+      <hr />
       <Outlet />
     </div>
   );
