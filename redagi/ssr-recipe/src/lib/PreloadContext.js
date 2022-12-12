@@ -16,3 +16,11 @@ export const Preloader = ({ reslove }) => {
   preloadContext.promises.push(Promise.resolve(reslove()));
   return null;
 };
+
+//hook type function
+export const usePreloader = (resolve) => {
+  const preloadContext = useContext(PreloadContext);
+  if (!preloadContext) return null;
+  if (preloadContext.done) return null;
+  preloadContext.promises.push(Promise.resolve(resolve()));
+};
