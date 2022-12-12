@@ -8,13 +8,17 @@ import UserContainer from "./containers/UserContainer";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />} exact>
-        <Route path="/red" element={<RedPage />} exact />
-        <Route path="/blue" element={<BluePage />} exact />
-        <Route path="/users" element={<UsersPage />} exact></Route>
-      </Route>
-    </Routes>
+    <div>
+      <Routes>
+        <Route path="/" element={<Layout />} exact>
+          <Route path="/red" element={<RedPage />} exact />
+          <Route path="/blue" element={<BluePage />} exact />
+          <Route path="/users" element={<UsersPage />} exact>
+            <Route path="/users/:id" element={<UserContainer />} />
+          </Route>
+        </Route>
+      </Routes>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 function Users({ users }) {
   if (!users) return null; // if users are not vaild, return nothing

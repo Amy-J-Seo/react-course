@@ -3,6 +3,7 @@ import Users from "../components/Users";
 import { connect } from "react-redux";
 import { getUsers } from "../modules/users";
 import { Preloader } from "../lib/PreloadContext";
+import { Outlet } from "react-router-dom";
 
 function UsersContainer({ users, getUsers }) {
   //call after component mounted
@@ -15,6 +16,7 @@ function UsersContainer({ users, getUsers }) {
     <>
       <Users users={users} />
       <Preloader reslove={getUsers} />
+      <Outlet />
     </>
   );
 }
