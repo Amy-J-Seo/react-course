@@ -4,7 +4,9 @@ function User({ user }) {
   const { email, name, username } = user;
 
   return (
-    <div>
+    <div
+      style={{ height: "100%", alignItems: "center", justifyContent: "center" }}
+    >
       <h1>
         {username} ({name})
       </h1>

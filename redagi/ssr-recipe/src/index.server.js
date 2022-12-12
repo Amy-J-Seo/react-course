@@ -11,18 +11,21 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import rootReducer from "./modules";
 import PreloadContext from "./lib/PreloadContext";
+import { ChunkExtractor, ChunkExtractorManager } from "@loadable/server";
 
 //search file paths from asset-manifest.json
-const manifest = JSON.parse(
-  fs.readFileSync(path.resolve("./build/asset-manifest.json"), "utf8")
-);
+// const manifest = JSON.parse(
+//   fs.readFileSync(path.resolve("./build/asset-manifest.json"), "utf8")
+// );
 
-const chunks = Object.keys(manifest.files)
-  .filter((key) => /chunk\.js$/.exec(key)) //find key that ends with chunk.js
-  .map((key) => `<script src="${manifest.files[key]}"></script>`) //conver to script tag
-  .join(""); //concat
+// const chunks = Object.keys(manifest.files)
+//   .filter((key) => /chunk\.js$/.exec(key)) //find key that ends with chunk.js
+//   .map((key) => `<script src="${manifest.files[key]}"></script>`) //conver to script tag
+//   .join(""); //concat
 
-function createPage(root, stateScript) {
+const statsFile = path.resolve("./build/loadable-stats.json");
+
+function createPage(root, tags) {
   return `<!Doctype html>
   <html lang="en">
   <head>
@@ -34,7 +37,8 @@ function createPage(root, stateScript) {
   />
   <meta name="theme-color" content="#000000"/>
   <title>React App</title>
-  <link href="${manifest.files["main.css"]}" rel="stylesheet" />
+  ${tags.styles}
+${tags.links}
   </head>
   <body>
   <noscript>You need to enable Javascript to run this app</noscript>
@@ -42,10 +46,7 @@ function createPage(root, stateScript) {
 ${root}
 
 </div>
-${stateScript}
-<script src="${manifest.files["runtime~main.js"]}"></script>
-${chunks}
-<script src="${manifest.files["main.js"]}" ></script>
+${tags.script}
   </body>
   </html>
   `;
@@ -65,14 +66,19 @@ const serverRender = async (req, res, next) => {
     promises: [],
   };
 
+  //ChunkExtractor to extract needed files
+  const extractor = new ChunkExtractor({ statsFile });
+
   const jsx = (
-    <PreloadContext.Provider value={preloadContext}>
-      <Provider store={store}>
-        <StaticRouter location={req.url} context={context}>
-          <App />
-        </StaticRouter>
-      </Provider>
-    </PreloadContext.Provider>
+    <ChunkExtractorManager extractor={extractor}>
+      <PreloadContext.Provider value={preloadContext}>
+        <Provider store={store}>
+          <StaticRouter location={req.url} context={context}>
+            <App />
+          </StaticRouter>
+        </Provider>
+      </PreloadContext.Provider>
+    </ChunkExtractorManager>
   );
 
   ReactDOMServer.renderToStaticMarkup(jsx); //render one more time using renderToStaticMarkup
@@ -89,8 +95,16 @@ const serverRender = async (req, res, next) => {
   const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c");
   // console.log("checking state String", stateString);
   const stateScript = `<script>__PRELOADED_STATE__=${stateString}</script>`; //inject initla redux state as script
+
+  // extract style script that should loaded in advance
+  const tags = {
+    scripts: stateScript + extractor.getScriptTags(),
+    links: extractor.getLinkTags(),
+    styles: extractor.getStyleTags(),
+  };
+
   // console.log("checking stateScript!!!!", stateScript);
-  res.send(createPage(root, stateScript)); // 결과물을 응답합니다.
+  res.send(createPage(root, tags)); // 결과물을 응답합니다.
 };
 
 const serve = express.static(path.resolve("./build"), {

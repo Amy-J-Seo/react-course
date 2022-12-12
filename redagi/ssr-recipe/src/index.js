@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import rootReducer, { rootSaga } from "./modules";
 import createSagaMiddleware from "redux-saga";
+import { loadableReady } from "@loadable/component";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -18,6 +19,17 @@ const store = legacy_createStore(
 );
 sagaMiddleware.run(rootSaga);
 
+// put in a one component so can reuse
+const Root = () => {
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  );
+};
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -26,3 +38,15 @@ root.render(
     </BrowserRouter>
   </Provider>
 );
+// on production env, use loadableReady and hydrate
+//dev env, render as before
+console.log(process);
+if (process.env.NODE_ENV === "production") {
+  console.log("production");
+  loadableReady(() => {
+    root.hydrate(<Root />);
+  });
+} else {
+  console.log("dev");
+  root.render(<Root />);
+}
